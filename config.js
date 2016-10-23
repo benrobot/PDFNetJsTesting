@@ -1,28 +1,15 @@
-(function() {
-    function GetURLParameter(sParam)
-    {
-        var sPageURL = window.location.search.substring(1);
-        var sURLVariables = sPageURL.split('&');
-        for (var i = 0; i < sURLVariables.length; i++)
-        {
-            var sParameterName = sURLVariables[i].split('=');
-            if (sParameterName[0] == sParam)
-            {
-                return sParameterName[1];
-            }
-        }
-    }
-    
+(function() {    
     $(document).on('documentLoaded', function() {
         PDFNet.initialize().then(function(){
             var doc = readerControl.docViewer.getDocument();
-            var pdfCoverPage = GetURLParameter("pdfCoverPage");
+            var QueryString = JSON.parse(window.ControlUtils.getCustomData());
+            var pdfCoverPage = QueryString.pdfCoverPage;
             console.log("pdfCoverPage=", pdfCoverPage);
             doc.getPDFDoc().then(function(pdfDoc){
                 // Run our script
                 runCustomViewerCode(pdfDoc).then(function(){
                     // load the cover document
-                    var partRetriever = new CoreControls.PartRetrievers.ExternalPdfPartRetriever("/resources/This_is_a_cover_page.pdf", {useDownloader: false});
+                    var partRetriever = new CoreControls.PartRetrievers.ExternalPdfPartRetriever(pdfCoverPage, {useDownloader: false});
                     var coverDoc = new CoreControls.Document(null, "pdf");
                     var coverDocReady = function() {
                         // copy page 1 from coverDoc to the beginning of doc

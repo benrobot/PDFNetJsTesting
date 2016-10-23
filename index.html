@@ -6,21 +6,23 @@
         <script src="WebViewer/jquery-1.7.2.min.js"></script>
         <script src="WebViewer/lib/WebViewer.min.js"></script>
         <script type="text/javascript">
-        function GetURLParameter(sParam)
-        {
-            var sPageURL = window.location.search.substring(1);
-            var sURLVariables = sPageURL.split('&');
-            for (var i = 0; i < sURLVariables.length; i++)
-            {
-                var sParameterName = sURLVariables[i].split('=');
-                if (sParameterName[0] == sParam)
-                {
-                    return sParameterName[1];
-                }
+        function getQueryParams(qs) {
+            qs = qs.split('+').join(' ');
+
+            var params = {},
+                tokens,
+                re = /[?&]?([^=]+)=([^&]*)/g;
+
+            while (tokens = re.exec(qs)) {
+                params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
             }
+
+            return params;
         }
+        var QueryString = getQueryParams(document.location.search);
+        
         $(function() {
-            var pdfToManipulate = GetURLParameter("pdfToManipulate");
+            var pdfToManipulate = QueryString.pdfToManipulate;
             console.log("pdfToManipulate=", pdfToManipulate);
             var viewerElement = document.getElementById('viewer');
             var myWebViewer = new PDFTron.WebViewer({
@@ -32,6 +34,7 @@
                 showLocalFilePicker: true,
                 enableAnnotations: true,
                 useDownloader: false,
+                custom: JSON.stringify(QueryString),
                 pdfnet: true
             }, viewerElement);
         });
