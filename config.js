@@ -1,8 +1,23 @@
 (function() {
+    function GetURLParameter(sParam)
+    {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++)
+        {
+            var sParameterName = sURLVariables[i].split('=');
+            if (sParameterName[0] == sParam)
+            {
+                return sParameterName[1];
+            }
+        }
+    }
+    
     $(document).on('documentLoaded', function() {
         PDFNet.initialize().then(function(){
             var doc = readerControl.docViewer.getDocument();
-            
+            var pdfCoverPage = GetURLParameter("pdfCoverPage");
+            console.log("pdfCoverPage=", pdfCoverPage);
             doc.getPDFDoc().then(function(pdfDoc){
                 // Run our script
                 runCustomViewerCode(pdfDoc).then(function(){
