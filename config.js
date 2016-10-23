@@ -4,33 +4,28 @@
             var doc = readerControl.docViewer.getDocument();
             
             doc.getPDFDoc().then(function(pdfDoc){
-                    console.log("Page count BEFORE ALL: ", readerControl.docViewer.getPageCount());
-                    // note that requirePage is not necessary here without 
+                // Run our script
+                runCustomViewerCode(pdfDoc).then(function(){
+                    // load the cover document
+                    var partRetriever = new CoreControls.PartRetrievers.ExternalPdfPartRetriever("/resources/This_is_a_cover_page.pdf", {useDownloader: false});
+                    var coverDoc = new CoreControls.Document(null, "pdf");
+                    var coverDocReady = function() {
+                        // copy page 1 from coverDoc to the beginning of doc
+                        // insertPages will automatically update the structure in WebViewer
+                        doc.insertPages(coverDoc, [1], 1).then(function() {
+                            // Since pages changed before we still need to make sure all pages are redrawn
+                            // Refresh the cache with the newly updated document
+                            readerControl.docViewer.refreshAll();
 
-                    console.log("Page count BEFORE runCustomViewerCode: ", readerControl.docViewer.getPageCount());
-                    // Run our script
-                    runCustomViewerCode(pdfDoc).then(function(){
-                        // load the cover document
-                        var partRetriever = new CoreControls.PartRetrievers.ExternalPdfPartRetriever("/resources/This_is_a_cover_page.pdf", {useDownloader: false});
-                        var coverDoc = new CoreControls.Document(null, "pdf");
-                        var coverDocReady = function() {
-                            // copy page 1 from coverDoc to the beginning of doc
-                            // insertPages will automatically update the structure in WebViewer
-                            doc.insertPages(coverDoc, [1], 1).then(function() {
-                                // Since pages changed before we still need to make sure all pages are redrawn
-                                // Refresh the cache with the newly updated document
-                                readerControl.docViewer.refreshAll();
-
-                                // Update viewer with changes
-                                readerControl.docViewer.updateView();
-                                console.log("Page count after insertPages: ", readerControl.docViewer.getPageCount());
-                            });
-                        };	
-                        // Note: since initPDFWorkerTransports has already been called by WebViewer constructor and PDFNet.initialize
-                        // it doesn't require any arguments.
-                        coverDoc.loadAsync(partRetriever, coverDocReady, {workerTransportPromise: CoreControls.initPDFWorkerTransports()});	
-                    });
+                            // Update viewer with changes
+                            readerControl.docViewer.updateView();
+                        });
+                    };
+                    // Note: since initPDFWorkerTransports has already been called by WebViewer constructor and PDFNet.initialize
+                    // it doesn't require any arguments.
+                    coverDoc.loadAsync(partRetriever, coverDocReady, {workerTransportPromise: CoreControls.initPDFWorkerTransports()});	
                 });
+            });
         });
     });
 
@@ -38,7 +33,6 @@
     {
         function* main()
         {
-            console.log("Hello WebViewer!");
             var doc = pdfDoc;
             doc.lock();
             
@@ -61,15 +55,13 @@
                 // delete all text stamps in odd pages
                 PDFNet.Stamper.deleteStamps(doc, oddPgSet);
 
-                console.log("Sample 1 complete");
-
                 yield PDFNet.endDeallocateStack();
             } catch (err) {
                 console.log(err.stack)
                 ret = 1;
             }
-            
         }
+        
         return PDFNet.runGeneratorWithCleanup(main());
     }
 })();
