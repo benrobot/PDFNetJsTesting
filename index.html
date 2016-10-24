@@ -4,7 +4,7 @@
         <title>Pdf Manipulation</title>
         <meta http-equiv="Content-Type" content="text/html">
         <script src="WebViewer/jquery-1.7.2.min.js"></script>
-        <script src="WebViewer/lib/WebViewer.min.js"></script>
+        <script src="WebViewer/lib/WebViewer.js"></script>
         <script type="text/javascript">
         function getQueryParams(qs) {
             qs = qs.split('+').join(' ');
@@ -25,19 +25,23 @@
             var pdfToManipulate = QueryString.pdfToManipulate;
             console.log("pdfToManipulate=", pdfToManipulate);
             var viewerElement = document.getElementById('viewer');
-            var myWebViewer = new PDFTron.WebViewer({
-                type: "html5",
-                path: "WebViewer/lib",
-                initialDoc: pdfToManipulate,
-                config: 'config.js',
-                documentType: "pdf",
-                showLocalFilePicker: true,
-                enableAnnotations: true,
-                useDownloader: false,
-                custom: JSON.stringify(QueryString),
-                xdomainProxyUrl: "https://c.na34.visual.force.com/apex/proxy",
-                pdfnet: true
-            }, viewerElement);
+            var webViewerOptions = 
+            {
+                    type: "html5",
+                    path: "WebViewer/lib",
+                    initialDoc: pdfToManipulate,
+                    config: 'config.js',
+                    documentType: "pdf",
+                    showLocalFilePicker: true,
+                    enableAnnotations: true,
+                    useDownloader: false,
+                    custom: JSON.stringify(QueryString),
+                    pdfnet: true
+            };
+            if (QueryString.includeXDomainJsOption == "true") {
+                webViewerOptions.xdomainProxyUrl = "https://c.na34.visual.force.com/apex/proxy";
+            }
+            var myWebViewer = new PDFTron.WebViewer(webViewerOptions, viewerElement);
         });
         </script>
     </head>
