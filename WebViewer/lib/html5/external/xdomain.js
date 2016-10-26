@@ -133,7 +133,7 @@ EventEmitter = function(nodeStyle) {
     _ref = listeners(event).concat(listeners("*"));
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       listener = _ref[i];
-      listener.apply(undefined, args);
+      listener.apply(this, args);
     }
   };
   if (nodeStyle) {
