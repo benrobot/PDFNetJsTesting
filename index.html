@@ -39,7 +39,7 @@
                     pdfnet: true
             };
             if (QueryString.includeXDomainJsOption == "true") {
-                webViewerOptions.xdomainProxyUrl = "https://qpms1.na34.visual.force.com/apex/proxy";
+                webViewerOptions.xdomainProxyUrl = "https://c.na34.content.force.com/servlet/servlet.FileDownload?retURL=https%3A%2F%2Fqpms1.na34.visual.force.com%2Fapex%2FCAPA%3Fid%3Da076100000JF2N6AAL&file=00P61000004lB8VEAU&_CONFIRMATIONTOKEN=VmpFPSxNakF4TmkweE1DMHpNRlF3TWpveU9Ub3lOUzR5TURKYSxRQ0Z3aXI1YTZBM1EtX1ozVDNfTGZJLFlUQmhOamht&common.udd.actions.ActionsUtilORIG_URI=%2Fservlet%2Fservlet.FileDownload";
             }
             var myWebViewer = new PDFTron.WebViewer(webViewerOptions, viewerElement);
         });
